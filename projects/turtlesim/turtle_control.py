@@ -1,5 +1,6 @@
 import rospy
 from geometry_msgs.msg import Twist
+import math
 
 pi = 3.14159265359
 
@@ -7,16 +8,20 @@ rospy.init_node ('set_vel')
 pub = rospy.Publisher('turtle1/cmd_vel', Twist, queue_size = 1)
 rate = rospy.Rate(10) #Hertz
 
+def theta_to_rad (theta):
+    rad = theta*pi/180
+    return rad
+
 def waituntill (time, pub, vel_msg):
     now = rospy.get_time()
     finish = now + time
+    rate = rospy.Rate(10) #Hertz
 
     while now < finish:
         #rospy.loginfo("loop")
         pub.publish(vel_msg)
         now = rospy.get_time()
-
-
+        rate.sleep()
 
 def turn_90h (vel, pub):
     vel_msg = Twist()
@@ -24,6 +29,16 @@ def turn_90h (vel, pub):
     time = (pi/2)/vel
 
     waituntill(time, pub, vel_msg)
+
+def turn_theta (theta, vel, pub):
+    vel_msg = Twist()
+    vel_msg.angular.z = vel
+#    rad = 0
+    #rad = theta_to_rad(theta)
+    time = theta/vel
+
+    waituntill(time, pub, vel_msg)
+    stop(pub)
 
 def stop(pub):
     vel_msg = Twist()
@@ -51,8 +66,20 @@ def fazquadrado (lado):
 
 while not rospy.is_shutdown():
 
-    print('Digite o tamanho do lado:')
-    n = 0
-    n = input()
+    vel = 12
+    print('Digite o valor de x e de y')
+    x = 0
+    x = input()
 
-    fazquadrado(n)
+    y = 0
+    y = input()
+
+    dist = math.sqrt(x*x + y*y)
+    theta = math.atan2(y,x)
+
+    print(dist,' ', theta)
+
+    turn_theta(theta, vel, pub)
+
+
+    #fazquadrado(n)
