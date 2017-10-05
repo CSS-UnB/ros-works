@@ -12,7 +12,7 @@ def waituntill (time, pub, vel_msg):
     finish = now + time
 
     while now < finish:
-        rospy.loginfo("loop")
+        #rospy.loginfo("loop")
         pub.publish(vel_msg)
         now = rospy.get_time()
 
@@ -35,10 +35,24 @@ def move_linear(vel, dist, pub):
     time = dist/vel
     waituntill(time, pub, vel_msg)
 
+def fazquadrado (lado):
+    i = 0
+
+    while i<4:
+        move_linear(1.0, lado, pub)
+        stop(pub)
+        if (i < 3):
+            turn_90h(1.0, pub)
+        i = i+ 1
+
+    print('Pronto')
+
 
 
 while not rospy.is_shutdown():
 
-    turn_90h(1.0, pub)
-    stop(pub)
-    move_linear(1.0, 1.0, pub)
+    print('Digite o tamanho do lado:')
+    n = 0
+    n = input()
+
+    fazquadrado(n)
